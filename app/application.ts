@@ -21,6 +21,7 @@ export class Application {
 
   start() {
     console.log("Application Started");
+    this.app.disable('x-powered-by');
     this.app.get("/virus/version", function (req, res, next) {
       clamav.version(3310, '127.0.0.1', 1000, function (err, version) {
         if (err) {
@@ -45,8 +46,6 @@ export class Application {
         }
       })
     });
-
-
 
     this.app.post("/virus/upload/multipart", upload.single("file"), function (
       req,
@@ -105,7 +104,6 @@ export class Application {
         next();
       }
     });
-
 
     this.app.listen(3000, function () {
       console.log("Server listening on port 3000");
