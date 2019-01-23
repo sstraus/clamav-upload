@@ -64,7 +64,7 @@ export class Application {
             next(err);
           } else if (malicious) {
             console.log(object.path + ": " + malicious + " FOUND");
-            next(new Error("Virus Detected"));
+            next(new Error(malicious + " FOUND"));
           } else {
             console.log(object.path + ": OK");
             res.send("OK");
