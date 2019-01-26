@@ -1,47 +1,89 @@
-FROM node:11.8-stretch-slim
-LABEL maintainer="Stefano Straus <stefano+docker@straus.it>"
-LABEL version="1.0"
-
+FROM mhart/alpine-node:10
+MAINTAINER Stefano Straus <stefano+docker@straus.it>
 # based on excellent work of Yeung Yiu Hung <hkclex@gmail.com> and others
 
 # Install ClamAV and supervisord
 # Debian Base to use
-ENV DEBIAN_VERSION stretch
 ENV CLAM_VERSION=0.101.1
 
 # Install ClamAV and supervisor
-RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION-updates main contrib non-free" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org/ $DEBIAN_VERSION/updates main contrib non-free" >> /etc/apt/sources.list && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y -qq \
-        build-essential \
-        libssl-dev \
-        libcurl4-openssl-dev \
-        zlib1g-dev \
-        libpng-dev \
-        libxml2-dev \
-        libjson-c-dev \
-        libbz2-dev \
-        libpcre3-dev \
-        ncurses-dev \
-        libclamunrar7 \
+RUN apk add --update \
+        pax-utils \
+        libattr \
+        attr \
+        tar \
+        pkgconf \
+        patch \
+        lzip \
+        ca-certificates \
+        libssh2 \
+        libcurl \
+        curl \
+        abuild \
+        binutils-libs \
+        binutils \
+        gmp \
+        isl \
+        libgomp \
+        libatomic \
+        mpfr3 \
+        mpc1 \
+        gcc \
+        musl-dev \
+        libc-dev \
+        g++ \
+        make \
+        fortify-headers \
+        build-base \
+        expat \
+        pcre2 \
+        git \
+        lz4-libs \
+        xz-libs \
+        lzo \
+        squashfs-tools \
+        libburn \
+        ncurses-terminfo-base \
+        ncurses-terminfo \
+        ncurses-libs \
+        libedit \
+        libacl \
+        libisofs \
+        libisoburn \
+        xorriso \
+        acct \
+        lddtree \
+        libuuid \
+        libblkid \
+        device-mapper-libs \
+        cryptsetup-libs \
+        kmod \
+        mkinitfs \
+        mtools \
+        alpine-sdk \
+        libxml2 \
+        linux-headers \
+        zlib-dev \
+        libcrypto1.0 \
+        libssl1.0 \
+        openssl-dev \
+        libbz2 \
+        libffi \
+        gdbm \
+        readline \
+        python2 \
+        py-meld3 \
+        py-setuptools \
         supervisor \
-        gcc \ 
-        openssl \
         wget \
-        make 
+
 
 RUN wget https://www.clamav.net/downloads/production/clamav-${CLAM_VERSION}.tar.gz && \
     tar xvzf clamav-${CLAM_VERSION}.tar.gz && \
     cd clamav-${CLAM_VERSION} && \
     ./configure && \
     make && make install && \
-    apt-get remove -y gcc make && \
-    apt-get -y autoclean && \
-    apt-get -y clean && \
-    apt-get -y autoremove && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/cache/apk/*
 
 RUN echo "/usr/lib" >> /etc/ld.so.conf.d/clamav.conf && \
     ldconfig -v
@@ -80,8 +122,8 @@ RUN npm install && npm run postinstall && npm prune --production
 
 # Copy supervisor and clam config
 COPY ./configs/supervisord.conf /etc/supervisor/conf.d/supervisord-nodejs.conf
-COPY ./configs/clamd.conf  /usr/local/etc/clamd.conf
-COPY ./configs/freshclam.conf  /usr/local/etc/freshclam.conf 
+COPY ./configs/clamd.conf /etc/clamav/clamd.conf
+COPY ./configs/freshclam.conf /etc/clamav/freshclam.conf 
 
 EXPOSE 3000
 CMD ["/usr/bin/supervisord", "-n"]
