@@ -1,6 +1,4 @@
 import express from "express";
-import http = require("http");
-import https = require("https");
 import multer = require("multer");
 import easyxml from "easyxml";
 import * as stream from "stream";
@@ -77,10 +75,9 @@ export class Application {
       console.log('About');
       res.send((<any>res).sendData(200, { result: "ok", "about": "stefano+docker@straus.it" }));
     });
-
+/*
     this.app.get("/virus/get", function (req, res, next) {
-    var client =  (req.query.url.toString().indexOf("https") === 0) ? https : http;
-        client.get(req.query.url, function (response) {
+        http.get(req.query.url, function (response) {
         const readStream = new stream.Readable();
         response.on('data', function (chunk) {
           readStream.push(chunk);
@@ -92,7 +89,7 @@ export class Application {
         next(err);
       });
     });
-
+*/
     this.app.get("/virus/version", function (req, res, next) {
       clamav.version(3310, '127.0.0.1', 1000, function (err, version) {
         if (err) {

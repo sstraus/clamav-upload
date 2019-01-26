@@ -51,10 +51,6 @@ In case of error, the result is "fail" and error contains the error description
 
 Accept a multipart uploaded file with name "file" and return if the file is infected.
 
-###### [GET] /virus/get?url=http://www.files.com/somefile.exe
-
-Will download the file and scan the binary data against viruses.
-
 This docker is not build to be publicly exposed to the INTERNET but to offer more protection, you can run the docker with a KEY variable set and provide a header with the same key in the request to authenticate requests.
 
 ##### Docker usage:
