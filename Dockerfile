@@ -7,7 +7,7 @@ LABEL version="1.0"
 # Install ClamAV and supervisord
 # Debian Base to use
 ENV DEBIAN_VERSION stretch
-ENV CLAM_VERSION=0.101.1
+ENV CLAM_VERSION=0.102.2
 
 # Install ClamAV and supervisor
 RUN echo "deb http://http.debian.net/debian/ $DEBIAN_VERSION main contrib non-free" > /etc/apt/sources.list && \
